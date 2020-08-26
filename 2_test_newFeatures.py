@@ -83,3 +83,4 @@ for surface in color_lookup:
     plt.scatter(surface_data[z_axis], surface_data[x_axis], color=color_lookup[surface], label=surface)
 plt.legend()
 plt.show()
+print(type(values))
