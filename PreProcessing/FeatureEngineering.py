@@ -4,6 +4,7 @@ import numpy as np
 
 
 class FeatureEngineering:
+    # Set the features as class attributes
     frequency_features = ['mean_PSD', 'max_PSD', 'PSD_above_20', 'weighted_mean']
     statistical_features = ['mean', 'max', 'min', 'std']
 
