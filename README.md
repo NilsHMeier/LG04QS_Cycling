@@ -6,3 +6,5 @@ The code is split into the parts of data preprecossing, feature engineering and 
 - Numpy
 - Pandas
 - Matplotlib
+- Scikit-Learn
+- Scipy
