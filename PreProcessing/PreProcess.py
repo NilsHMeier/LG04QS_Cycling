@@ -38,7 +38,7 @@ class PreProcess:
             raw_data = pd.read_csv(source_path + file)
             raw_data.columns = ['time', 'x', 'y', 'z', 'abs']
             # Run all steps of preprocessing
-            raw_data = PreProcess.process_offset(raw_data, file)
+            raw_data = PreProcess.process_offset(raw_data)
             # Save cropped data to be able to apply changes later on
             raw_data.to_csv(cut_path + file)
             coefficient = PreProcess.suspension_coefficients[file[3:5]]
