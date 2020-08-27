@@ -16,14 +16,15 @@ feature_datatable = pd.DataFrame(columns=features)
 period = 10
 low_freq = 10
 high_freq = 30
-names = ['NM']
+names = ['NM', 'LP', 'NB']
 color_lookup = {'AS': 'r', 'RW': 'b', 'SC': 'y', 'WW': 'g', 'KO': 'c'}
+engineer = FeatureEngineering(SOURCE_PATH, '', period)
 
 for file in os.listdir(SOURCE_PATH):
     if len(names) > 0 and file[3:5] not in names:
         continue
     data = pd.read_csv(SOURCE_PATH + file, index_col=0)
-    data_table = FeatureEngineering.create_dataset(cols, period, int(data['time'].max()))
+    data_table = engineer.create_dataset(cols, int(data['time'].max()))
     for timestamp in data_table['time']:
         relevant_rows = data[((data['time'] >= timestamp) & (data['time'] < timestamp + period))]
         generated_features = {'surface': file[0:2]}
@@ -60,7 +61,7 @@ surface_feature = {surface: feature_datatable[feature_datatable['surface'] == su
 # Plot with 3 features out of 12
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-x_axis = 'y_weighted_mean' #'z_PSD_above_20'
+x_axis = 'y_weighted_mean' # 'z_PSD_above_20'
 y_axis = 'z_PSD_above_20' #'y_mean_PSD'
 z_axis = 'z_mean_PSD' #'x_mean_PSD'
 for surface in color_lookup:
@@ -83,4 +84,3 @@ for surface in color_lookup:
     plt.scatter(surface_data[z_axis], surface_data[x_axis], color=color_lookup[surface], label=surface)
 plt.legend()
 plt.show()
-print(type(values))
