@@ -15,7 +15,7 @@ class PreProcess:
     @staticmethod
     def process_new_files(source_path: str, destination_path: str, cut_path: str):
         """
-        Method to run all steps of preprocessing on new files in source_path, which were not processed before.
+        Runs all steps of preprocessing on new files in source_path, which were not processed before.
 
         :param source_path: Source of the data to be processed. Has to end with /
         :param destination_path: Target path to save the processed data in. Has to end with /
@@ -52,7 +52,7 @@ class PreProcess:
     @staticmethod
     def process_offset(raw_data: pd.DataFrame) -> pd.DataFrame:
         """
-        Method to crop the data to the needed period. User has to enter start end stop values
+        Crops the data to the needed period. User has to enter start end stop values
         after taking a look on the data.
 
         :param raw_data: Data to process the offset on.
@@ -79,7 +79,7 @@ class PreProcess:
     @staticmethod
     def process_suspension_coefficient(raw_data: pd.DataFrame, coefficient: float, cols: list) -> pd.DataFrame:
         """
-        Method to apply the suspension coefficient on the data.
+        Applies the suspension coefficient on the data.
 
         :param raw_data: Data to apply the coefficient on.
         :param coefficient: Coefficient to use.
@@ -96,7 +96,7 @@ class PreProcess:
     @staticmethod
     def process_filter(raw_data: pd.DataFrame, f: int, cols: list = ['x', 'y', 'z']) -> pd.DataFrame:
         """
-        Method to apply a bandpass-filter on the given cols in the data. Filters out frequencies that are
+        Applies a bandpass-filter on the given cols in the data. Filters out frequencies that are
         smaller than 5 or greater than 30 Hz.
 
         :param raw_data: Data to apply the filter on.
@@ -115,7 +115,7 @@ class PreProcess:
     @staticmethod
     def process_outlier_detection(data: pd.DataFrame, cols: list) -> pd.DataFrame:
         """
-        Method to find and replace outliers in the given data by distribution-based outlier detection.
+        Finds and replaces outliers in the given data by distribution-based outlier detection.
 
         :param data: Data to do the outlier detection on.
         :param cols: Specific cols to use.
@@ -149,7 +149,7 @@ class PreProcess:
     @staticmethod
     def impute_interpolate(dataset: pd.DataFrame, col: str) -> pd.DataFrame:
         """
-        Method used after outlier detection to replace outlier with interpolated values.
+        Fills missing values after outlier detection with interpolated values.
 
         :param dataset: Data with outliers as NANs.
         :param col: Col in which to impute values.
@@ -163,11 +163,12 @@ class PreProcess:
     @staticmethod
     def apply_changes(file: str):
         """
-        Method used to quickly apply changes on a single file, in case parameters in preprocessing have changed.
+        Applies changes on a single file quickly, in case parameters in preprocessing have changed.
+        Can be used for multithreading.
 
         :param file: Name of the file. Has to end with .csv
         """
-        # Set cource and destination path
+        # Set source and destination path
         SOURCE_PATH = 'Data/CuttedData/'
         DESTINATION_PATH = 'Data/ProcessedData/'
         # Tell the user which file is processed
