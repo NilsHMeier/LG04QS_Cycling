@@ -9,27 +9,32 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa
 import pickle
 
 # Set path & names where to save the models and choose which type of learning to do
+SOURCE_PATH = 'Data/AggregatedData/'
 MODEL_PATH = 'Models/'
-DO_KNN = True
+DO_KNN = False
 KNN_FILE_NAME = 'knn.sav'
 DO_DT = False
 DT_FILE_NAME = 'dt.sav'
-DO_SVM = False
+DO_SVM = True
 SVM_FILE_NAME = 'svm.sav'
+# Decide which features should be placed in training datatable
+STAT_FEATURES = True
+FREQ_FEATURES = False
 
 # Create datatable for training the model
-train_datatable = PrepareDataset.fill_datatable('Data/AggregatedData/', 'label', [])
-# Select the features that will be used in learning process
-selected_features = [col + feature for col in ['x', 'y', 'z'] for feature in ['_mean', '_max', '_min', '_std']]
+data_preparing = PrepareDataset(SOURCE_PATH, STAT_FEATURES, FREQ_FEATURES, 'label', ['x', 'y', 'z'])
+train_datatable = data_preparing.fill_datatable([])
 # Divide the datatable into train and validation data and create dictionaries of them
-X_train, X_test, Y_train, Y_test = PrepareDataset.split_dataset(train_datatable, selected_features, 'label', 0.3)
+X_train, X_test, Y_train, Y_test = data_preparing.split_dataset_default(train_datatable, 0.3)
 train_data = {'x': X_train, 'y': Y_train}
 test_data = {'x': X_test, 'y': Y_test}
 
-# Create datatable with test data to test the trained model
-evaluation_datatable = PrepareDataset.prepare_evaluation_dataset(
-    'Data/EvaluationData/', 'label', ['NP', 'NM', 'LP'], 15, 20)
-# evaluation_datatable = PrepareDataset.fill_datatable('Data/AggregatedData/', 'label', ['NM'])
+# Create datatable with test data to evaluate the model
+evaluation_datatable = data_preparing.prepare_evaluation_dataset('Data/EvaluationData/', ['NP', 'NM', 'LP'], 15, 15)
+# evaluation_datatable = data_preparing.fill_datatable(['NM'])
+# Make sure evaluation data has the same form as training data
+evaluation_datatable = evaluation_datatable.drop(columns=[col for col in evaluation_datatable.columns
+                                                          if col != 'label' and col not in X_train.columns])
 
 if DO_KNN:
     print('- - - Running learning for KNN - - -')

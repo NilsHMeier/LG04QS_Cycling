@@ -66,7 +66,7 @@ class FeatureEngineering:
         """
         # Create new datatable with timestamps to max time
         data_table = self.create_dataset(cols, int(raw_data['time'].max()))
-        f = 200 if cyclist == 'NB' else 100
+        f = 200 if cyclist in ['NB', 'NP'] else 100
         # For each timestamp calculate the features
         for timestamp in data_table['time']:
             # Select the relevant rows of the raw data
