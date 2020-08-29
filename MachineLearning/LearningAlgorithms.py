@@ -59,10 +59,10 @@ class MachineLearning:
         :param test: Dictionary containing the feature data and the labels to validate the model with.
         :return: Returns the best achieved score and the DecisionTreeClassifier as tuple.
         """
-        params = {'max_leaf_nodes': list(range(2, 100)), 'min_samples_split': [2, 3, 4]}
+        params = {'max_leaf_nodes': list(range(2, 50)), 'min_samples_split': [2, 3, 4]}
         grid_search_cv = GridSearchCV(DecisionTreeClassifier(), params, verbose=3, refit=True)
         grid_search_cv.fit(train['x'], train['y'])
-        accuracy = grid_search_cv.score(test['x'], test['y'])
+        accuracy = grid_search_cv.best_estimator_.score(test['x'], test['y'])
         return accuracy, grid_search_cv.best_estimator_
 
     @staticmethod
@@ -107,7 +107,7 @@ class MachineLearning:
         grid.fit(train['x'], train['y'])
         print(grid.best_params_)
         print(grid.best_estimator_)
-        accuracy = grid.score(test['x'], test['y'])
+        accuracy = grid.best_estimator_.score(test['x'], test['y'])
         return accuracy, grid.best_estimator_
 
     @staticmethod
