@@ -88,7 +88,8 @@ class FeatureEngineering:
         :param values: Values to calculate the features on.
         :return: Returns a dictionary containing the features with the names as keys.
         """
-        results = {'mean': np.mean(values), 'max': np.max(values), 'min': np.min(values), 'std': np.std(values)}
+        results = {'mean': np.mean(values), 'max': np.max(values), 'min': np.min(values),
+                   'range': np.max(values) - np.min(values), 'std': np.std(values)}
         return results
 
     @staticmethod
@@ -107,6 +108,7 @@ class FeatureEngineering:
         freq = (1 / (dt * n)) * np.arange(n)
         data = pd.DataFrame(data={'freq': freq, 'PSD': PSD, 'FHAT': fhat})
         data['weighted'] = data['freq'] * data['PSD']
+        data = data[((data['freq'] >= 5) & (data['freq'] <= 30))]
         results = {'mean_PSD': np.mean(data['PSD']).real, 'max_PSD': np.max(data['PSD']).real,
                    'PSD_above_20': sum(1 if psd.real > 20 else 0 for psd in data['PSD']),
                    'weighted_mean': np.mean(data['weighted']).real}
