@@ -1,5 +1,6 @@
 from MachineLearning.PrepareData import PrepareDataset
 from MachineLearning.LearningAlgorithms import MachineLearning
+from MachineLearning.FeatureSelection import FeatureSelection
 import pandas as pd # noqa
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,26 +16,44 @@ DO_KNN = False
 KNN_FILE_NAME = 'knn.sav'
 DO_DT = False
 DT_FILE_NAME = 'dt.sav'
-DO_SVM = True
+DO_SVM = False
 SVM_FILE_NAME = 'svm.sav'
 # Decide which features should be placed in training datatable
 STAT_FEATURES = True
-FREQ_FEATURES = False
+FREQ_FEATURES = True
 
 # Create datatable for training the model
 data_preparing = PrepareDataset(SOURCE_PATH, STAT_FEATURES, FREQ_FEATURES, 'label', ['x', 'y', 'z'])
-train_datatable = data_preparing.fill_datatable([])
+train_datatable = data_preparing.fill_datatable(['LP', 'NB', 'NM'])
+# Select features to use or leave the list empty to use all features
+selected_features = []
 # Divide the datatable into train and validation data and create dictionaries of them
-X_train, X_test, Y_train, Y_test = data_preparing.split_dataset_default(train_datatable, 0.3)
+if len(selected_features) == 0:
+    X_train, X_test, Y_train, Y_test = data_preparing.split_dataset_default(train_datatable, 0.3)
+else:
+    X_train, X_test, Y_train, Y_test = data_preparing.split_dataset_selected(train_datatable, selected_features, 0.3)
+print('X_train columns:', X_train.columns)
 train_data = {'x': X_train, 'y': Y_train}
 test_data = {'x': X_test, 'y': Y_test}
 
 # Create datatable with test data to evaluate the model
-evaluation_datatable = data_preparing.prepare_evaluation_dataset('Data/EvaluationData/', ['NP', 'NM', 'LP'], 15, 15)
+evaluation_datatable = data_preparing.prepare_evaluation_dataset('Data/EvaluationData/', ['NM', 'LP'], 15, 15)
 # evaluation_datatable = data_preparing.fill_datatable(['NM'])
 # Make sure evaluation data has the same form as training data
 evaluation_datatable = evaluation_datatable.drop(columns=[col for col in evaluation_datatable.columns
                                                           if col != 'label' and col not in X_train.columns])
+
+# Run feature selection to determine the best features
+max_features = 27
+features, scores = FeatureSelection.forward_selection(max_features, X_train, Y_train, X_test, Y_test)
+print(f'Best {max_features} features are {features} with scores {scores}')
+plt.subplot(111)
+plt.plot(list(range(1, max_features+1)), scores)
+plt.xticks(list(range(1, max_features+1)), features, rotation='vertical')
+plt.xlabel('Number of features')
+plt.ylabel('Score')
+plt.xlim(1, max_features)
+plt.show()
 
 if DO_KNN:
     print('- - - Running learning for KNN - - -')
