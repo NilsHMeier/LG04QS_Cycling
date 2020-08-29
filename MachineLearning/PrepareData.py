@@ -10,7 +10,7 @@ from PreProcessing.FeatureEngineering import FeatureEngineering
 class PrepareDataset:
     # Set the features as class attributes
     frequency_features = ['mean_PSD', 'max_PSD', 'PSD_above_20', 'weighted_mean']
-    statistical_features = ['mean', 'max', 'min', 'std']
+    statistical_features = ['mean', 'max', 'min', 'std', 'range']
 
     def __init__(self, source_path: str, stat: bool, freq: bool, label_col: str, cols: list):
         self.SOURCE_PATH = source_path
