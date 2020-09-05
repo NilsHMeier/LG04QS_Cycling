@@ -9,11 +9,11 @@ DESTINATION_PATH = 'Data/ProcessedData/'
 CUT_PATH = 'Data/CuttedData/'
 
 # Set parameter to decide what to do. True = Process new files. False = Apply Changes
-NEW_FILES = False
+NEW_FILES = True
 
 # Call to start processing new files
 if NEW_FILES:
-    PreProcess.process_new_files(SOURCE_PATH, DESTINATION_PATH, CUT_PATH)
+    PreProcess.process_new_files(SOURCE_PATH, DESTINATION_PATH, CUT_PATH, True)
 
 # Call to apply changes on data. Uses real multithreading.
 if not NEW_FILES and __name__ == "__main__":

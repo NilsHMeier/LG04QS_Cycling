@@ -9,17 +9,21 @@ from Util.Data_Vizualizer import Vizualizer
 
 
 class PreProcess:
-    suspension_coefficients = {'LP': 0, 'NM': 0.3082, 'NB': 0.4805, 'NP': 0.44}
+    suspension_coefficients = pd.DataFrame(data={'NM': [0.3193, 0.3390, np.nan, 0.3529, 0.1679, 0.1317],
+                                                 'NB': [0.5056, 0.5463, 0.5041, 0.3614, 0.5106, np.nan]},
+                                           index=['mean', 'AS', 'RW', 'WW', 'SC', 'KO'])
+    # suspension_coefficients = {'LP': 0, 'NM': 0.3082, 'NB': 0.4805, 'NP': 0.44}
     frequencies = {'NB': 200, 'NM': 100, 'LP': 100, 'NP': 200}
 
     @staticmethod
-    def process_new_files(source_path: str, destination_path: str, cut_path: str):
+    def process_new_files(source_path: str, destination_path: str, cut_path: str, mean_SPC: bool):
         """
         Runs all steps of preprocessing on new files in source_path, which were not processed before.
 
         :param source_path: Source of the data to be processed. Has to end with /
         :param destination_path: Target path to save the processed data in. Has to end with /
         :param cut_path: Path to save the cropped files in. Has to end with /
+        :param mean_SPC: Set to true if mean SPC should be used. Otherwise specific SPCs will be used.
         """
         destination_files = os.listdir(destination_path)
         file_counter = 1
@@ -31,7 +35,7 @@ class PreProcess:
                 print('Skipping file', file, f'({file_counter}/{total_files})')
                 file_counter += 1
                 continue
-            # Starting proprocessing on file
+            # Starting preprocessing on file
             print('Running preprocessing on file', file, f'({file_counter}/{total_files})')
 
             # Read in the file and modify the dataframe
@@ -41,7 +45,10 @@ class PreProcess:
             raw_data = PreProcess.process_offset(raw_data)
             # Save cropped data to be able to apply changes later on
             raw_data.to_csv(cut_path + file)
-            coefficient = PreProcess.suspension_coefficients[file[3:5]]
+            if mean_SPC:
+                coefficient = PreProcess.suspension_coefficients.loc['mean', file[3:5]]
+            else:
+                coefficient = PreProcess.suspension_coefficients.loc[file[0:2], file[3:5]]
             raw_data = PreProcess.process_suspension_coefficient(raw_data, coefficient, ['x', 'y', 'z'])
             raw_data = PreProcess.process_filter(raw_data, PreProcess.frequencies[file[3:5]])
             raw_data = PreProcess.process_outlier_detection(raw_data, ['x', 'y', 'z'])
