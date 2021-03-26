@@ -10,7 +10,8 @@ from Util.Data_Vizualizer import Vizualizer
 
 class PreProcess:
     suspension_coefficients = pd.DataFrame(data={'NM': [0.3193, 0.3390, np.nan, 0.3529, 0.1679, 0.1317],
-                                                 'NB': [0.5056, 0.5463, 0.5041, 0.3614, 0.5106, np.nan]},
+                                                 'NB': [0.5056, 0.5463, 0.5041, 0.3614, 0.5106, np.nan],
+                                                 'LP': [0, 0, 0, 0, 0, 0]},
                                            index=['mean', 'AS', 'RW', 'WW', 'SC', 'KO'])
     # suspension_coefficients = {'LP': 0, 'NM': 0.3082, 'NB': 0.4805, 'NP': 0.44}
     frequencies = {'NB': 200, 'NM': 100, 'LP': 100, 'NP': 200}
@@ -112,7 +113,7 @@ class PreProcess:
         :return: Returns the filtered data.
         """
         processed_data = copy.deepcopy(raw_data)
-        # Create 'blueprint' filter for the data with 5 & 30 as cutter freqs and 10 as filter ordner
+        # Create 'blueprint' filter for the data with 5 & 30 as cutter freqs and 10 as filter order
         sos = signal.butter(10, (5, 30), btype='bandpass', fs=f, output='sos')
         # Apply filter to each col
         for col in cols:
@@ -180,9 +181,9 @@ class PreProcess:
         DESTINATION_PATH = 'Data/ProcessedData/'
         # Tell the user which file is processed
         print(f'Processing file {file}')
-        # Read the file in and do all steps of preprocessing exept offset
+        # Read the file in and do all steps of preprocessing except offset
         data = pd.read_csv(SOURCE_PATH + file, index_col=0)
-        coefficient = PreProcess.suspension_coefficients[file[3:5]]
+        coefficient = PreProcess.suspension_coefficients.loc['mean', file[3:5]]
         data = PreProcess.process_suspension_coefficient(data, coefficient, ['x', 'y', 'z'])
         data = PreProcess.process_filter(data, 200 if file[3:5] == 'NB' else 100)
         data = PreProcess.process_outlier_detection(data, ['x', 'y', 'z'])

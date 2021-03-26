@@ -112,7 +112,7 @@ class PrepareDataset:
             # Check if the file should be processed.
             if file[3:5] not in names:
                 continue
-            print('Adding file', file, 'to dataset', f'({file_counter}/{total_files})')
+            print('Adding file', file, 'to evaluation dataset', f'({file_counter}/{total_files})')
             # Read the raw data in and prepare it for preprocessing
             raw_data = pd.read_csv(source_path + file)
             raw_data.columns = ['time', 'x', 'y', 'z', 'abs']
@@ -124,7 +124,7 @@ class PrepareDataset:
             offset_data.index = offset_data.index - offset_data.index.min()
             # Put the SPC on the data
             coefficient_data = PreProcess.process_suspension_coefficient(
-                offset_data, PreProcess.suspension_coefficients[file[3:5]], ['x', 'y', 'z'])
+                offset_data, PreProcess.suspension_coefficients.loc['mean', file[3:5]], ['x', 'y', 'z'])
             # Process the bandpass filter
             filtered_data = PreProcess.process_filter(
                 coefficient_data, PreProcess.frequencies[file[3:5]], ['x', 'y', 'z'])
